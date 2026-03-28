@@ -1,5 +1,5 @@
 # Step 1: Build
-FROM node:18 AS builder
+FROM node:20 AS builder
 
 WORKDIR /app
 COPY . .
@@ -7,11 +7,12 @@ COPY . .
 RUN npm install
 RUN npm run build
 
-# Step 2: Serve with Nginx
-FROM nginx:alpine
+# Step 2: Production
+FROM node:20-alpine
 
-COPY --from=builder /app/build /usr/share/nginx/html
+WORKDIR /app
+COPY --from=builder /app ./
 
-EXPOSE 80
+EXPOSE 3000
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "start"]
